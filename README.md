@@ -30,9 +30,11 @@ Modules that need to be installed (with pip for example):
 
 The application can be executed by command line in live-capture mode or in file-reader mode (reading pcap files).
 
-Since the live capture mode needs the name of the network interface the following command can be useful:
 
 # LIST NETWORK INTERFACES COMMAND
+
+Since the live capture mode needs the name of the network interface the following command can be useful:
+
     
    **- FOR LINUX:**
     						
