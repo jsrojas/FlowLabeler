@@ -34,9 +34,9 @@ Since the live capture mode needs the name of the network interface the followin
 
 **- LIST NETWORK INTERFACES COMMAND:**
     
-    **- FOR LINUX:**
+   **- FOR LINUX:**
     						
-							ip link show
+						ip link show
 
 **MODES OF OPERATION EXAMPLES:**
 
