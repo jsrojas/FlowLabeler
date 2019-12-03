@@ -1,0 +1,17 @@
+Modules that need to be installed (with pip for example):
+-pandas
+-dpkt
+-numpy
+-lru-dict
+-pypcap (it is necessary to have libpcap installed in the OS for this module to install it use:)
+
+		sudo apt-get install libpcap-dev
+-ctypes
+
+Modules that should already be included with the python interpreter:
+-time
+-collections
+-socket
+-json
+-hashlib
+-os
