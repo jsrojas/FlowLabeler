@@ -32,7 +32,7 @@ The application can be executed by command line in live-capture mode or in file-
 
 Since the live capture mode needs the name of the network interface the following command can be useful:
 
-- LIST NETWORK INTERFACES COMMAND:
+**- LIST NETWORK INTERFACES COMMAND:**
     
     **- FOR LINUX:**
     						
@@ -42,7 +42,7 @@ Since the live capture mode needs the name of the network interface the followin
 
 **- LIVE CAPTURE MODE (needs to be executed with sudo):**
     
-    The structure of the command is the following:
+  The structure of the command is the following:
         
 			sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
     Examples:
@@ -52,7 +52,8 @@ Since the live capture mode needs the name of the network interface the followin
 			sudo python3 main-file.py i enp6s0f1 /home/jsrojas/Test.csv
         
 **- FILE READER MODE:**
-    The structure of the command is the following:
+    
+  The structure of the command is the following:
         
 			python3 main-file.py [operation mode] [path-to-pcap-file] [CSV FILE NAME]
     Examples:
