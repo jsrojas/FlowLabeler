@@ -15,10 +15,15 @@ This application was created using **python 3.6.8**
 **REQUIRED PYTHON MODULES**
 
 Modules that need to be installed (with pip for example):
+
 -pandas
+
 -dpkt
+
 -numpy
+
 -lru-dict
+
 -pypcap - it is necessary to have libpcap installed in the OS before installing pypcap. To install libpcap in Linux use:
 
 		                      	 sudo apt-get install libpcap-dev
@@ -28,6 +33,7 @@ The application can be executed by command line in live-capture mode or in file-
 Since the live capture mode needs the name of the network interface the following command can be useful:
 
 - LIST NETWORK INTERFACES COMMAND:
+    
     **- FOR LINUX:**
     						
 						ip link show
@@ -35,6 +41,7 @@ Since the live capture mode needs the name of the network interface the followin
 **MODES OF OPERATION EXAMPLES:**
 
 **- LIVE CAPTURE MODE (needs to be executed with sudo):**
+    
     The structure of the command is the following:
         
 			sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
