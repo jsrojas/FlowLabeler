@@ -56,7 +56,7 @@ Since the live capture mode needs the name of the network interface the followin
   The structure of the command is the following:
         
 			python3 main-file.py [operation mode] [path-to-pcap-file] [CSV FILE NAME]
-    Examples:
+  Examples:
         
 					python3 main-file.py f file.pcap Test.csv
         
