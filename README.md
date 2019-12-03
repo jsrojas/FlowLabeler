@@ -4,7 +4,8 @@ a csv file storing flow records containing bidirectional statistics and the appl
 using nDPI library.
 
 It is important to mention that this application is based on nfstream release 0.5.0 available on the following link:
-                            https://github.com/aouinizied/nfstream/tree/v0.5.0/nfstream
+                            
+			    https://github.com/aouinizied/nfstream/tree/v0.5.0/nfstream
   
 And also on FlowRecorder available on the following link:
                                       https://github.com/drnpkr/flowRecorder
@@ -19,7 +20,7 @@ Modules that need to be installed (with pip for example):
 -lru-dict
 -pypcap - it is necessary to have libpcap installed in the OS before installing pypcap. To install libpcap in Linux use:
 
-		                                      sudo apt-get install libpcap-dev
+		                      	 sudo apt-get install libpcap-dev
 
 The application can be executed by command line in live-capture mode or in file-reader mode (reading pcap files).
 
