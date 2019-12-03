@@ -1,4 +1,5 @@
 # FlowLabeler
+
 FlowLabeler is an application capable of processing IP packets either from pcap files or on a live capture mode to generate  
 a csv file storing flow records containing bidirectional statistics and the application layer protocol (Youtube, Facebook, etc) using nDPI library.
 
@@ -10,9 +11,9 @@ And also on FlowRecorder available on the following link:
                                       
 				      https://github.com/drnpkr/flowRecorder
 
-This application was created using python 3.6.8
+This application was created using **python 3.6.8**
 
-REQUIRED PYTHON MODULES
+**REQUIRED PYTHON MODULES**
 
 Modules that need to be installed (with pip for example):
 -pandas
@@ -28,11 +29,13 @@ The application can be executed by command line in live-capture mode or in file-
 Since the live capture mode needs the name of the network interface the following command can be useful:
 
 - LIST NETWORK INTERFACES COMMAND:
-    - FOR LINUX:
-    						ip link show
+    **- FOR LINUX:**
+    						
+						ip link show
 
-MODES OF OPERATION EXAMPLES:
-- LIVE CAPTURE MODE (needs to be executed with sudo):
+**MODES OF OPERATION EXAMPLES:**
+
+**- LIVE CAPTURE MODE (needs to be executed with sudo):**
     The structure of the command is the following:
         
 			sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
@@ -42,7 +45,7 @@ MODES OF OPERATION EXAMPLES:
         		
 			sudo python3 main-file.py i enp6s0f1 /home/jsrojas/Test.csv
         
-- FILE READER MODE:
+**- FILE READER MODE:**
     The structure of the command is the following:
         
 			python3 main-file.py [operation mode] [path-to-pcap-file] [CSV FILE NAME]
