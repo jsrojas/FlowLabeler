@@ -44,8 +44,8 @@ Since the live capture mode needs the name of the network interface the followin
     
   The structure of the command is the following:
         
-			sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
-    Examples:
+		sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
+  Examples:
         
 			sudo python3 main-file.py i wlp0s20f3 /home/jsrojas/Test.csv
         		
