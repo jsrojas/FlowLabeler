@@ -12,7 +12,7 @@ And also on FlowRecorder available on the following link:
 
 This application was created using **python 3.6.8**
 
-**REQUIRED PYTHON MODULES**
+# REQUIRED PYTHON MODULES
 
 Modules that need to be installed (with pip for example):
 
@@ -32,13 +32,15 @@ The application can be executed by command line in live-capture mode or in file-
 
 Since the live capture mode needs the name of the network interface the following command can be useful:
 
-**- LIST NETWORK INTERFACES COMMAND:**
+# LIST NETWORK INTERFACES COMMAND
     
    **- FOR LINUX:**
     						
 						ip link show
 
-**MODES OF OPERATION EXAMPLES:**
+# MODES OF OPERATION
+
+The application must be execute through the main-file.py in the command line
 
 **- LIVE CAPTURE MODE (needs to be executed with sudo):**
     
