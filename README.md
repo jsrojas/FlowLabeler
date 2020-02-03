@@ -51,9 +51,9 @@ The application must be execute through the main-file.py in the command line
 		sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
   Examples:
         
-			sudo python3 main-file.py i wlp0s20f3 /home/jsrojas/Test.csv
+			sudo python3 main-file.py i wlp0s20f3 /home/jsrojas/Test.csv 120 60
         		
-			sudo python3 main-file.py i enp6s0f1 /home/jsrojas/Test.csv
+			sudo python3 main-file.py i enp6s0f1 /home/jsrojas/Juan/Test.csv 120 60
         
 **- FILE READER MODE:**
     
@@ -62,6 +62,7 @@ The application must be execute through the main-file.py in the command line
 			python3 main-file.py [operation mode] [path-to-pcap-file] [CSV FILE NAME]
   Examples:
         
-					python3 main-file.py f file.pcap Test.csv
+					python3 main-file.py f file.pcap Test.csv 120 60
         
-			python3 main-file.py f /home/jsrojas/Facebook-packets.pcap /home/jsrojas/Test.csv
+			        python3 main-file.py f /home/jsrojas/Juan/Facebook-packets.pcap /home/Test.csv 120 60
+
