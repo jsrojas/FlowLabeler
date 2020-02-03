@@ -316,7 +316,6 @@ class Flow:
         print("**FLOW RECORD CREATED SUCCESSFULY")
 
     def check_RST_flag(self, pkt_info):
-        print("******INSIDE RST FLAG THREAD")
         if (pkt_info.RST_flag):
             # This packet has an RST flag expired return 4
             print("****RST FLAG DETECTED - EXPORTING FLOW")
@@ -345,16 +344,6 @@ class Flow:
             return self.export_reason
         else:
             print("****PACKET WITHOUT FIN FLAG")
-            return self.export_reason
-
-    def check_active_time(self, pkt_info, active_timeout, previous_end_time):
-        print("******INSIDE ACTIVE TIME THREAD")
-        if (pkt_info.ts_float - previous_end_time) >= (active_timeout*1000):  # Active Expiration
-            # The active timeout has expired return 1
-            print("****ACTIVE TIMEOUT EXPIRED - EXPORTING FLOW")
-            self.export_reason = 1
-            return self.export_reason
-        else:
             return self.export_reason
 
     def update_flow_statistics(self, pkt_info, streamer_classifiers, streamer_metrics):
@@ -469,12 +458,11 @@ class Flow:
         current_time = time.time()
         previous_end_time = self.end_time
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-            RST_flag_thread = executor.submit(self.check_RST_flag, pkt_info)
+        self.check_RST_flag(pkt_info)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             FIN_flag_thread = executor.submit(self.check_FIN_flag, pkt_info)
-            return_value_RST_flag = RST_flag_thread.result()
             return_value_FIN_flag = FIN_flag_thread.result()
-            print("******THREAD RST FLAG RESULT: ", return_value_RST_flag)
             print("******THREAD FIN FLAG RESULT: ", return_value_FIN_flag)
 
         self.update_flow_statistics(pkt_info, streamer_classifiers, streamer_metrics)
