@@ -38,6 +38,7 @@ if(operation_mode == "i" and input_file and output_file and active_timeout and i
     try:
         print('STARTING LIVE CAPTURE MODE')
         processing_start_time = time.time()
+        print("\nSTART TIME: ", time.ctime(processing_start_time))
         capture_streamer = Streamer(source=input_file, capacity=128000, active_timeout=active_timeout, inactive_timeout=inactive_timeout)
         capture_streamer.inactive_watcher(capture_streamer.inactive_timer_event)
         capture_streamer.active_watcher(capture_streamer.active_timer_event)
@@ -174,7 +175,9 @@ if(operation_mode == "i" and input_file and output_file and active_timeout and i
 # If the operation mode is file mode
 elif(operation_mode == "f" and input_file and output_file and active_timeout and inactive_timeout):
     try:
+        print('STARTING FILE MODE')
         processing_start_time = time.time()
+        print("\nSTART TIME: ", time.ctime(processing_start_time))
         capture_streamer = Streamer(source=input_file, capacity=128000,active_timeout=active_timeout, inactive_timeout=inactive_timeout)
         capture_streamer.inactive_watcher(capture_streamer.inactive_timer_event)
         capture_streamer.active_watcher(capture_streamer.active_timer_event)
@@ -279,7 +282,7 @@ elif(operation_mode == "f" and input_file and output_file and active_timeout and
                                         'category': flow.classifiers['ndpi']['category_name'],
                                         'application_name': flow.classifiers['ndpi']['application_name']},
                                        ignore_index=True)
-            if (idx + 1) % 10 == 0:
+            if (idx + 1) % 100 == 0:
                 print('\nCurrent generated flows: ', flows_counter)
 
                 #Creating the flowDuration column
@@ -290,8 +293,8 @@ elif(operation_mode == "f" and input_file and output_file and active_timeout and
         print('\nCREATING CSV FILE........')
         df_flows.to_csv(output_file, index=None, header=True)
         print('\n*****CSV FILE CREATED******')
-        print("\nNUMBER OF ANALYZED PACKETS:", capture_streamer.processed_packets)
-        print("\nNUMBER OF FLOWS:", capture_streamer.flows_number)
+        print("\nNUMBER OF ANALYZED PACKETS:", capture_streamer.processed_packets, "packets")
+        print("\nNUMBER OF FLOWS:", capture_streamer.flows_number, "flows")
         processing_end_time = time.time()
         print('\nSTART TIME:', time.ctime(processing_start_time))
         print('\nEND TIME:', time.ctime(processing_end_time))

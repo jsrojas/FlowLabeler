@@ -203,7 +203,6 @@ class Flow:
 
     #****************************************************** METHODS ***************************************************************************
     def create_new_flow_record(self, pkt_info, streamer_classifiers, streamer_metrics):
-        print("**ENTERING CREATE NEW FLOW RECORD")
         # Obtain Flow Hash key
         flow_key = get_flow_key(pkt_info)
         # Get the position inside the of the flow inside the flow cache
@@ -244,7 +243,7 @@ class Flow:
         # INITIALIZING FORWARD STATISTICS
         if (self.__ip_src_int == pkt_info.ip_src and self.__ip_dst_int == pkt_info.ip_dst and
                 self.src_port == pkt_info.src_port and self.dst_port == pkt_info.dst_port):
-            print("******PACKET IN FWD DIRECTION - UDATING FORWARD STATISTICS")
+            # print("******PACKET IN FWD DIRECTION - UDATING FORWARD STATISTICS")
             # It is going in the forward direction, increase forward number of packets by 1
             self.src_to_dst_pkts += 1
             # Add the packet size to the total packet size of the flow
@@ -274,7 +273,6 @@ class Flow:
 
         #INITIALIZING BACKWARD STATISTICS
         else:
-            print("******PACKET IN BWD DIRECTION - UPDATING")
             # Increase the number of packets going from destination to source by 1
             self.dst_to_src_pkts += 1
             # Add the current packet size to the total packet size of the flow in the backward direction
@@ -313,41 +311,35 @@ class Flow:
         metrics_names = list(streamer_metrics.keys())
         for metric_name in metrics_names:
             self.metrics[metric_name] = streamer_metrics[metric_name](pkt_info, self)
-        print("**FLOW RECORD CREATED SUCCESSFULY")
 
     def check_RST_flag(self, pkt_info):
+        # Check if the packet has an RST flag
         if (pkt_info.RST_flag):
             # This packet has an RST flag expired return 4
-            print("****RST FLAG DETECTED - EXPORTING FLOW")
             self.export_reason = 4
             return self.export_reason
         else:
-            print("****PACKET WITHOUT RST FLAG")
+            # Return the export reason without modifying it
             return self.export_reason
 
     def check_FIN_flag(self, pkt_info):
-        print("******INSIDE FIN FLAG THREAD")
+        # Does the packet has a FIN flag set?
         if (pkt_info.FIN_flag):
-            print("****FIN FLAG DETECTED - INCREASING FIN FLAG COUNTER")
+            # if it has a FIN flag increase the counter by 1
             self.FIN_flag_counter += 1
+            # If the counter after the increasing is equal to 1 start FIN flag timer
             if(self.FIN_flag_counter == 1):
                 # Start TCP TIMER
-                print("****FIN FLAG COUNTER IS 1")
-                print("****STARTING FIN FLAG TIMER")
                 self.tcp_start_time = time.time()
-                print("****FIN FLAG TIMER STARTED")
-            elif(self.FIN_flag_counter == 2):
-                print("****FIN FLAG COUNTER IS 2 WAITING FOR LAST ACK")
+        # If the FIN flag counter is 2 and the packet has an ACK flag set export reason as 3 (flow completely finished)
         elif(pkt_info.ACK_flag and self.FIN_flag_counter == 2):
-            print("****LAST ACK FLAG OF 4-WAY HANDSHAKE DETECTED - EXPORTING FLOW")
             self.export_reason = 3
             return self.export_reason
         else:
-            print("****PACKET WITHOUT FIN FLAG")
+            # Return the export reason without modifying it
             return self.export_reason
 
     def update_flow_statistics(self, pkt_info, streamer_classifiers, streamer_metrics):
-        print("**ENTERING UPDATE FLOW STATISTICS")
         # Find the flow record using the flow key
         flow_key = get_flow_key(pkt_info)
         flow_dict = self.flow_cache[flow_key]
@@ -377,7 +369,6 @@ class Flow:
         # UPDATING FORWARD STATISTICS
         if (self.__ip_src_int == pkt_info.ip_src and self.__ip_dst_int == pkt_info.ip_dst and
                 self.src_port == pkt_info.src_port and self.dst_port == pkt_info.dst_port):
-            print("******PACKET IN FWD DIRECTION - UPDATING FORWARD STATISTICS")
             # It is going in the forward direction, increase forward number of packets by 1
             self.src_to_dst_pkts += 1
             # Add the packet size to the total packet size of the flow
@@ -408,7 +399,6 @@ class Flow:
         # UPDATING BACKWARD STATISTICS
         else:
             # Note: this may be the first time we've seen backwards dir packet.
-            print("******PACKET IN BWD DIRECTION - UPDATING BACKWARD STATISTICS")
             # Increase the number of packets going from destination to source by 1
             self.dst_to_src_pkts += 1
             # Add the current packet size to the total packet size of the flow in the backward direction
@@ -448,29 +438,30 @@ class Flow:
         metrics_names = list(streamer_metrics.keys())
         for metric_name in metrics_names:
             self.metrics[metric_name] = streamer_metrics[metric_name](pkt_info, self)
-        print("**BIDIRECTIONAL STATISTICS UPDATED SUCCESSFULY")
 
 
     def start_threads_and_update_statistics(self, pkt_info, active_timeout, streamer_classifiers, streamer_metrics, flows_LRU):
-        print("**ENTERING START THREADS AND UPDATE STATISTICS")
-
         # Store previous packet end time to check active timeout after updating statistics
         current_time = time.time()
         previous_end_time = self.end_time
 
+        # Check if the packet has an RST flag
         self.check_RST_flag(pkt_info)
 
+        # Start the thread to check if the packet has a FIN flag with a ThreadPoolExecutor
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             FIN_flag_thread = executor.submit(self.check_FIN_flag, pkt_info)
             return_value_FIN_flag = FIN_flag_thread.result()
-            print("******THREAD FIN FLAG RESULT: ", return_value_FIN_flag)
 
+        # Update bidirectional statistics
         self.update_flow_statistics(pkt_info, streamer_classifiers, streamer_metrics)
 
+        # Check FIN flag timer in case it has beet started on a previous thread
         if ((self.tcp_start_time != None) and ((current_time - self.tcp_start_time) > 2) and
                 (flows_LRU[self.key].FIN_flag_counter == 1)):
             self.export_reason = 5
 
+        # Return the current export reason
         return self.export_reason
 
     def __str__(self):
@@ -570,7 +561,6 @@ class Streamer:
 
     def inactive_watcher(self, inactive_timer_event):
         """ inactive expiration management """
-        print("******************************************************CHECKING INACTIVE TIMEOUT THREAD")
         if not inactive_timer_event.is_set():
             threading.Timer(1, self.inactive_watcher, [inactive_timer_event]).start()
             remaining_inactives = True
@@ -593,39 +583,35 @@ class Streamer:
                     remaining_inactives = False
 
     def active_watcher(self, active_timer_event):
-        print("******************************************************CHECKING ACTIVE TIMEOUT THREAD")
+        # Obtaining all the flows stored in the LRU
         active_flows = self.__flows.values()
-        print("length: ", len(active_flows))
+        # If the time set on the event has expired check if the active timeout has expired
         if not active_timer_event.is_set():
             threading.Timer(1, self.active_watcher, [active_timer_event]).start()
             try:
+                # Iterate through the active flows and check the active timeout
                 for i, value in enumerate(active_flows):
-                    print("CHECKING: ", value)
+                    # Is the active timeout expired?
                     if (self.current_tick - value.end_time) >= (self.active_timeout * 1000):
-                        # Set export reason to 0 (inactive) in the flow
+                        # Set export reason to 1 (active) in the flow
                         value.export_reason = 1
-                        print("active timeout expired: ", value.export_reason)
                         # Export the flow to the final flows collection
                         self.exporter(value)
                     else:
-                        print("ACTIVE TIMEOUT NOT EXPIRED")
-                        print("LIMIT: ", self.active_timeout * 1000)
-                        print("DIFFERENCE: ", self.current_tick - value.end_time)
+                        # If the active timeout has not expired continue with the next flow
                         continue
             except (KeyboardInterrupt, SystemExit):
                 print("PROCESSING INTERRUPTED")
 
     def consume(self, pkt_info):
         """ consume a packet and update Streamer status """
-        self.processed_packets += 1  # increment total processed packet counter
+        # increment total processed packet counter
+        self.processed_packets += 1
         # Obtain a flow hash key for identification of the flow
         key = get_flow_key(pkt_info)
-        # Start inactive and active timeouts threads on the LRU
-        print("\nCONSUMING PACKET FROM FLOW:", key)
 
-        # Is this packet from a registered flow?
+        # Is this packet from a registered flow in the LRU?
         if key in self.__flows:
-            print("FLOW FOUND - STARTING THREADS")
             # Checking current status of the flow that the packet belongs to
             # -1 active flow - 0 inactive timeout expired - 1 active timeout expired - 2 flow still active but flushed from the LRU
             # 3 FIN flags and ACK flag detected - 4 RST flag detected - 5 FIN flag timeout expired
@@ -650,12 +636,10 @@ class Streamer:
                 self.exporter(self.__flows[key])
             if (flow_status == 5): # FIN FLAG TIMER EXPIRED
                 self.exporter(self.__flows[key])
-                print("****FLOW EXPORTED")
 
         # This packet belongs to a new flow
         else:
             # Increase the count of current active flows
-            print("FLOW NOT FOUND - CREATING NEW FLOW REGISTER")
             # Update flow counters
             self.current_flows += 1
             self.flows_number += 1
@@ -669,7 +653,6 @@ class Streamer:
             flow.create_new_flow_record(pkt_info, self.user_classifiers, self.user_metrics)
             # Set the current start time on the streamer timer to keep control of the inactive flows
             self.current_tick = flow.start_time
-        print("*******************PACKET CONSUMED - MOVING TO NEXT*********************************")
 
     def __iter__(self):
         # Create the packet information generator
