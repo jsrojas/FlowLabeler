@@ -48,7 +48,7 @@ The application must be execute through the main-file.py in the command line
     
   The structure of the command is the following:
         
-		sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME]
+		sudo python3 main-file.py [operation mode (i or f)] [network-interface] [CSV FILE NAME] [ACTIVE TIMEOUT (SECONDS)] [INACTIVE TIMEOUT (SECONDS)]
   Examples:
         
 			sudo python3 main-file.py i wlp0s20f3 /home/jsrojas/Test.csv 120 60
