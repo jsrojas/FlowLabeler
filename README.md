@@ -59,7 +59,7 @@ The application must be execute through the main-file.py in the command line
     
   The structure of the command is the following:
         
-			python3 main-file.py [operation mode] [path-to-pcap-file] [CSV FILE NAME]
+			python3 main-file.py [operation mode] [path-to-pcap-file] [CSV FILE NAME] [ACTIVE TIMEOUT (SECONDS)] [INACTIVE TIMEOUT (SECONDS)]
   Examples:
         
 					python3 main-file.py f file.pcap Test.csv 120 60
