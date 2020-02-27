@@ -16,6 +16,9 @@ This application was created using **python 3.6.8**
 
 Modules that need to be installed (with pip for example):
 
+-pip3 - For installing python modules
+		                    	sudo apt-get install python3-pip
+
 -pandas
 
 -dpkt
