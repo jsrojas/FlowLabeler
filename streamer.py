@@ -183,6 +183,8 @@ class Flow:
         self.FIN_flag_counter = 0
         # Initialize the attribute that will hold the timer for the FIN FLAG
         self.tcp_start_time = None
+        # Initialize a counter to detect the ACK flag on the flow
+        self.ACK_flag_counter = 0
         # Initialize the metrics dictionary where the user can add new flow metrics
         self.metrics = {}
         # Initialize the classifiers dictionary where the user can add his/her own classifiers
@@ -313,33 +315,48 @@ class Flow:
             self.metrics[metric_name] = streamer_metrics[metric_name](pkt_info, self)
 
     def check_RST_flag(self, pkt_info):
+        print("***CHECKING RST FLAG")
         # Check if the packet has an RST flag
         if (pkt_info.RST_flag):
+            print("******RST FLAG FOUND")
             # This packet has an RST flag expired return 4
             self.export_reason = 4
             return self.export_reason
         else:
             # Return the export reason without modifying it
+            print("******RST FLAG NOT FOUND - MOVING TO FIN FLAG CHECK")
             return self.export_reason
 
     def check_FIN_flag(self, pkt_info):
+        print("***CHECKING FIN AND ACK FLAGS")
         # Does the packet has a FIN flag set?
         if (pkt_info.FIN_flag):
+            print("******FIN FLAG FOUND - INCREASING COUNTER")
             # if it has a FIN flag increase the counter by 1
             self.FIN_flag_counter += 1
+            print("******FIN FLAG COUNTER: ", self.FIN_flag_counter)
             # If the counter after the increasing is equal to 1 start FIN flag timer
             if(self.FIN_flag_counter == 1):
                 # Start TCP TIMER
+                print("******FIN FLAG COUNTER IS 1 - STARTING TIMER")
                 self.tcp_start_time = time.time()
         # If the FIN flag counter is 2 and the packet has an ACK flag set export reason as 3 (flow completely finished)
-        elif(pkt_info.ACK_flag and self.FIN_flag_counter == 2):
+        elif (pkt_info.ACK_flag and self.FIN_flag_counter >= 1):
+            print("******ACK FLAG FOUND - INCREASING COUNTER")
+            # if it has a FIN flag increase the counter by 1
+            self.ACK_flag_counter += 1
+            print("******ACK FLAG COUNTER: ", self.ACK_flag_counter)
+        if(self.ACK_flag_counter == 2 and self.FIN_flag_counter == 2):
+            print("******FIN FLAG COUNTER IS 2 AND ACK FLAG COUNTER IS 2")
             self.export_reason = 3
             return self.export_reason
         else:
+            print("******FIN AND ACK FLAGS COUNTERS ARE NOT 2 - MOVING TO UPDATE STATISTICS")
             # Return the export reason without modifying it
             return self.export_reason
 
     def update_flow_statistics(self, pkt_info, streamer_classifiers, streamer_metrics):
+        print("***UPDATING FLOW STATISTICS")
         # Find the flow record using the flow key
         flow_key = get_flow_key(pkt_info)
         flow_dict = self.flow_cache[flow_key]
@@ -606,12 +623,16 @@ class Streamer:
     def consume(self, pkt_info):
         """ consume a packet and update Streamer status """
         # increment total processed packet counter
+        print("\n****************STARTING PACKET ANALYSIS****************************")
         self.processed_packets += 1
+        print("CURRENT PROCESSED PACKETS: ",self.processed_packets)
+
         # Obtain a flow hash key for identification of the flow
         key = get_flow_key(pkt_info)
 
         # Is this packet from a registered flow in the LRU?
         if key in self.__flows:
+            print("FLOW FOUND IN LRU - CHECKING FLAGS AND UPDATING - HASH:", key)
             # Checking current status of the flow that the packet belongs to
             # -1 active flow - 0 inactive timeout expired - 1 active timeout expired - 2 flow still active but flushed from the LRU
             # 3 FIN flags and ACK flag detected - 4 RST flag detected - 5 FIN flag timeout expired
@@ -619,6 +640,7 @@ class Streamer:
 
             #Has the active timeout of the flow register expired (2 minutes)?
             if (flow_status == 1):
+                print("ACTIVE TIMEOUT EXPIRED - EXPORTING FLOW")
                 # Export the old flow register to the final collection and terminate this flow process on the specified classifier
                 self.exporter(self.__flows[key])
                 # Create a new flow register for the current packet
@@ -631,14 +653,18 @@ class Streamer:
                 # Update the flow status on the collection
                 flow.create_new_flow_record(pkt_info, self.user_classifiers, self.user_metrics)
             if (flow_status == 3): # FIN FLAG DETECTED IN BOTH DIRECTIONS - EXPORTING FLOW
+                print("FOUND FIN AND ACK FLAGS IN BOTH DIRECTIONS - EXPORTING FLOW")
                 self.exporter(self.__flows[key])
             if (flow_status == 4): # RST FLAG FOUND - UPDATING BIDIRECTIONAL STATISTICS - EXPORTING FLOW
+                print("FOUND RST FLAG - EXPORTING FLOW")
                 self.exporter(self.__flows[key])
             if (flow_status == 5): # FIN FLAG TIMER EXPIRED
+                print("FIN FLAG TIMER EXPIRED - EXPORTING FLOW")
                 self.exporter(self.__flows[key])
 
         # This packet belongs to a new flow
         else:
+            print("PACKET OF A NEW FLOW FOUND - CREATING REGISTER WITH HASH:", key)
             # Increase the count of current active flows
             # Update flow counters
             self.current_flows += 1
@@ -653,6 +679,7 @@ class Streamer:
             flow.create_new_flow_record(pkt_info, self.user_classifiers, self.user_metrics)
             # Set the current start time on the streamer timer to keep control of the inactive flows
             self.current_tick = flow.start_time
+        print("****************MOVING TO NEXT PACKET****************************")
 
     def __iter__(self):
         # Create the packet information generator
