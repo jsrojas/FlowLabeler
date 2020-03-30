@@ -66,7 +66,7 @@ The application must be execute through the main-file.py in the command line
         
 			python3 main-file.py f /home/jsrojas/Facebook-packets.pcap /home/jsrojas/Test.csv
 			
-# Attributes List
+# Attributes List - 49 attributes
 -***flow_key*** - Flow identifier through a hash algorithm
 
 -***src_ip_numeric*** - Source IP in decimal format
