@@ -163,5 +163,5 @@ The application must be execute through the main-file.py in the command line
    
   -***category*** - Category of the communication as delivered by nDPI
    
-  -***application_protocol*** - Application protocol for the flow (e.g., TLS.Facebook, HTTP.YouTube, DNS.GMail, etc) detected by nDPI
+  -***application_name*** - Application protocol for the flow (e.g., TLS.Facebook, HTTP.YouTube, DNS.GMail, etc) detected by nDPI
     
