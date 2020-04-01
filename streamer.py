@@ -375,13 +375,13 @@ class Flow:
         self.min_pkt_size = min(flow_dict['length'])
         self.max_pkt_size = max(flow_dict['length'])
         self.avg_pkt_size = self.octetTotalCount / self.pktTotalCount
-        self.std_dev_pkt_size = np.std(flow_dict['length'])
+        self.std_dev_pkt_size = np.std(flow_dict['length'], ddof=1)
         self.end_time = pkt_info.ts_float
         self.flowDuration = self.end_time - self.start_time
         self.min_piat = min(flow_dict['iats'])
         self.max_piat = max(flow_dict['iats'])
         self.avg_piat = sum(flow_dict['iats']) / (self.pktTotalCount - 1)
-        self.std_dev_piat = np.std(flow_dict['iats'])
+        self.std_dev_piat = np.std(flow_dict['iats'], ddof=1)
 
         # UPDATING FORWARD STATISTICS
         if (self.__ip_src_int == pkt_info.ip_src and self.__ip_dst_int == pkt_info.ip_dst and
@@ -397,7 +397,7 @@ class Flow:
             self.f_min_pkt_size = min(flow_dict['f_length'])
             self.f_max_pkt_size = max(flow_dict['f_length'])
             self.f_avg_pkt_size = self.src_to_dst_bytes / self.src_to_dst_pkts
-            self.f_std_dev_pkt_size = np.std(flow_dict['f_length'])
+            self.f_std_dev_pkt_size = np.std(flow_dict['f_length'], ddof=1)
 
             # Store the timestamps of the current packet:
             flow_dict['f_times'].append(pkt_info.ts_float)
@@ -411,7 +411,7 @@ class Flow:
             self.f_min_piat = min(flow_dict['f_iats'])
             self.f_max_piat = max(flow_dict['f_iats'])
             self.f_avg_piat = sum(flow_dict['f_iats']) / (self.src_to_dst_pkts - 1)
-            self.f_std_dev_piat = np.std(flow_dict['f_iats'])
+            self.f_std_dev_piat = np.std(flow_dict['f_iats'], ddof=1)
 
         # UPDATING BACKWARD STATISTICS
         else:
@@ -427,7 +427,7 @@ class Flow:
             self.b_min_pkt_size = min(flow_dict['b_length'])
             self.b_max_pkt_size = max(flow_dict['b_length'])
             self.b_avg_pkt_size = self.dst_to_src_bytes / self.dst_to_src_pkts
-            self.b_std_dev_pkt_size = np.std(flow_dict['b_length'])
+            self.b_std_dev_pkt_size = np.std(flow_dict['b_length'], ddof=1)
 
             # Store the timestamps of the newly captured packets:
             flow_dict['b_times'].append(pkt_info.ts_float)
@@ -441,12 +441,12 @@ class Flow:
                 # Not first time seen a packet in the backward direction:
                 flow_dict['b_iats'].append(flow_dict['b_times'][-1] - flow_dict['b_times'][-2])
                 self.b_end_time = pkt_info.ts_float
-                self.b_flowDuration = (pkt_info.ts - self.b_start_time)
+                self.b_flowDuration = (pkt_info.ts_float - self.b_start_time)
                 # Update the min/max/avg/std_dev of packet-inter-arrival-times:
                 self.b_min_piat = min(flow_dict['b_iats'])
                 self.b_max_piat = max(flow_dict['b_iats'])
                 self.b_avg_piat = sum(flow_dict['b_iats']) / (self.dst_to_src_pkts - 1)
-                self.b_std_dev_piat = np.std(flow_dict['b_iats'])
+                self.b_std_dev_piat = np.std(flow_dict['b_iats'], ddof=1)
 
         for name, classifier in streamer_classifiers.items():
             classifier.on_flow_update(pkt_info, self)
