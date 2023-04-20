@@ -2,7 +2,7 @@
 
 FlowLabeler is an application capable of processing IP packets either from pcap files or on a live capture mode to generate a csv file storing flow records containing bidirectional statistics and the application layer protocol (Youtube, Facebook, etc) using nDPI library.
 
-It is important to mention that, this application is based on nfstream release 0.5.0 available on the following link:
+It is important to mention that this application is based on nfstream release 0.5.0 available on the following link:
                             
 			    https://github.com/aouinizied/nfstream/tree/v0.5.0/nfstream
   
