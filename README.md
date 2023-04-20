@@ -46,7 +46,7 @@ Since the live capture mode needs the name of the network interface the followin
 
 # MODES OF OPERATION
 
-The application must be execute through the main-file.py in the command line
+The application must be executed through the main-file.py in the command line
 
 **- LIVE CAPTURE MODE (needs to be executed with sudo):**
     
